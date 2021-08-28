@@ -1,0 +1,9 @@
+syntax = "proto3";
+package mess;
+
+message AuthReq {
+    string workspace_domain = 1;
+    string email = 2;
+    string password = 3;
+    int64 auth_type = 4;
+}
