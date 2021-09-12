@@ -1,4 +1,9 @@
+from ..import model
+import grpc
+
 class BasePresenter(object):
-	def __init__(self, model, project_name='default'):
+	def __init__(self, model, project=None):
 		self.model = model
-		self.project_name = project_name
+		if project is None:
+			project = model.core.session.get_default()
+		self.session = project_name

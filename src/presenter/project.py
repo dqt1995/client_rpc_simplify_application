@@ -17,3 +17,6 @@ class ProjectPresenter(BasePresenter):
 
     def delete_project(self):
         pass
+
+    def save_project(self):
+        pass
