@@ -14,7 +14,7 @@ class project_session(object):
         self._models = {}
         self._cache_path = self.cache_default_folder.joinpath(self._uid).with_suffix('.ms')
 
-        _sessions[self._project_name] = weakref.ref(self)
+        _sessions[self._uid] = weakref.ref(self)
 
     def add_model(self, **kwargs):
         assert any([key not in self._models for key in kwargs]), "Duplicate model registered inside this project {}!".format(self._project_name)
@@ -27,7 +27,8 @@ class project_session(object):
         del self._models[model]
         
     def __del__(self):
-        del _sessions[self._project_name]
+        # also del weakref to its
+        del _sessions[self._uid]
 
     def copy(self, project_name=None):
         # make a copy of project by copy it's setting and model
@@ -36,11 +37,17 @@ class project_session(object):
         # should copy all of model inside it
         return type(self)(project_name, **self._models)
 
+    def commit_model(self, models=[]):
+        # commit models in current session (?) do we really need it?
+        # will re evaluate this function and make decision in (no) future
+        # in future (maybe no future) when we dump the changing part seperatedly, this will be implemented
+        raise NotImplemented
+
     def commit(self):
-        # for simplify, we commit and load all column, but maybe we should change into store and load changing part
+        # commit all models in current session
+        # for simplify, we commit and load all column, but maybe we should change into store and load changing part by generate bytes from each col
         with open(self._cache_path, 'wb') as cache_file:
             marshal.dump(self._models, cache_file)
-        # need to define a session writer
 
     def rollback(self):
         with open(self._cache_path, 'rb') as cache_folder:
